@@ -2,14 +2,21 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://example.com/2021/09/14/LinkedList%E8%AF%A6%E8%A7%A3/</loc>
+    <loc>http://feelerice.github.io/2021/09/14/HashMap%E8%AF%A6%E8%A7%A3/</loc>
     
     <lastmod>2021-09-14</lastmod>
     
   </url>
   
   <url>
-    <loc>http://example.com/2021/09/13/ArrayList%E8%AF%A6%E8%A7%A3/</loc>
+    <loc>http://feelerice.github.io/2021/09/14/LinkedList%E8%AF%A6%E8%A7%A3/</loc>
+    
+    <lastmod>2021-09-14</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://feelerice.github.io/2021/09/13/ArrayList%E8%AF%A6%E8%A7%A3/</loc>
     
     <lastmod>2021-09-13</lastmod>
     
@@ -17,7 +24,7 @@
   
 
   <url>
-    <loc>http://example.com/</loc>
+    <loc>http://feelerice.github.io/</loc>
     <lastmod>2021-09-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -25,14 +32,14 @@
 
   
   <url>
-    <loc>http://example.com/tags/java/</loc>
+    <loc>http://feelerice.github.io/tags/java/</loc>
     <lastmod>2021-09-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>http://example.com/tags/%E9%9B%86%E5%90%88/</loc>
+    <loc>http://feelerice.github.io/tags/%E9%9B%86%E5%90%88/</loc>
     <lastmod>2021-09-14</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
