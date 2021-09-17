@@ -6,7 +6,7 @@
   <link href="http://feelerice.github.io/atom.xml" rel="self"/>
   
   <link href="http://feelerice.github.io/"/>
-  <updated>2021-09-15T09:31:25.908Z</updated>
+  <updated>2021-09-17T15:18:54.847Z</updated>
   <id>http://feelerice.github.io/</id>
   
   <author>
@@ -15,6 +15,76 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>对象的内存布局</title>
+    <link href="http://feelerice.github.io/2021/09/17/%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/"/>
+    <id>http://feelerice.github.io/2021/09/17/%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/</id>
+    <published>2021-09-17T14:58:26.000Z</published>
+    <updated>2021-09-17T15:18:54.847Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Java的对象内存布局"><a href="#Java的对象内存布局" class="headerlink" title="Java的对象内存布局"></a>Java的对象内存布局</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>对于Java程序而言，绝大部分的数据（对象）都存放在堆内存中。对象在堆内存中的存储布局可以划分为三个部分：</p><ul><li>对象头（Header）</li><li>实例数据（Instance Data）</li><li>对齐填充（Padding）</li></ul><h2 id="对象头（Header）"><a href="#对象头（Header）" class="headerlink" title="对象头（Header）"></a>对象头（Header）</h2><p>HotSpot虚拟机中，对象的对象头部分包括两部分内容：</p><ol><li>用于存储对象自身运行时数据，如哈希码（HashCode）、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时间戳等信息。</li><li>类型指针，即对象指向它的类型元数据的指针，Java虚拟机通过这个指针来确定当前对象是哪个类的实例。</li></ol><p><strong>注：在数组对象中，对象头还必须有一块用于记录数组长度的数据</strong></p><h2 id="实例数据（Instance-Data）"><a href="#实例数据（Instance-Data）" class="headerlink" title="实例数据（Instance Data）"></a>实例数据（Instance Data）</h2><p>即我们在程序中定义的类中类型的字段内容，无论是从父类继承下来的，还是在子类中定义的字段都必须记录起来。</p><p>在HotSpot虚拟机中实例数据的存储顺序会受到一下配置的影响</p><blockquote><p>-XX:FieldAllocationStyle</p></blockquote><p>其顺序为：Double/Long、ints、shorts、chars/booleans、oops（Ordinary Object Pointers、oops）</p><p>可以看出相同宽度的字段总是被分配到一起存放，在满足这个顺序的前提下，在父类中定义的变量会被分配到子类的变量前面。</p><p>如果使用以下参数，那么子类中较窄的变量也允许插入到父类变量的空隙中。</p><blockquote><p>-XX : CompactFields</p></blockquote><h2 id="对齐填充（Padding）"><a href="#对齐填充（Padding）" class="headerlink" title="对齐填充（Padding）"></a>对齐填充（Padding）</h2><p>对于Java对象而言，这一部分并不是必须存在的。由于HotSpot虚拟机的内存自动管理系统要求对象起始地址都必须是8字节的整数倍，也就是说对象的大小必须时8字节的整数倍。那么对于一些不满足8字节整数倍大小的对象来说，就需要这一部分来进行对齐填充来补全。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;Java的对象内存布局&quot;&gt;&lt;a href=&quot;#Java的对象内存布局&quot; class=&quot;headerlink&quot; title=&quot;Java的对象内存布局&quot;&gt;&lt;/a&gt;Java的对象内存布局&lt;/h1&gt;&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;head</summary>
+      
+    
+    
+    
+    
+    <category term="JVM" scheme="http://feelerice.github.io/tags/JVM/"/>
+    
+    <category term="锁" scheme="http://feelerice.github.io/tags/%E9%94%81/"/>
+    
+    <category term="hotSpot" scheme="http://feelerice.github.io/tags/hotSpot/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>redis的持久化策略</title>
+    <link href="http://feelerice.github.io/2021/09/16/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96%E7%AD%96%E7%95%A5/"/>
+    <id>http://feelerice.github.io/2021/09/16/redis%E7%9A%84%E6%8C%81%E4%B9%85%E5%8C%96%E7%AD%96%E7%95%A5/</id>
+    <published>2021-09-16T01:33:31.000Z</published>
+    <updated>2021-09-16T04:46:26.499Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="redis的持久化策略"><a href="#redis的持久化策略" class="headerlink" title="redis的持久化策略"></a>redis的持久化策略</h1><h2 id="RDB"><a href="#RDB" class="headerlink" title="RDB"></a>RDB</h2><p>RDB其实就是把数据以快照的形式保存在磁盘上。什么是快照呢，你可以理解成把当前时刻的数据拍成一张照片保存下来。</p><p>RDB持久化是指在指定的时间间隔内将内存中的数据集快照写入磁盘。也是默认的持久化方式，这种方式是就是将内存中数据以快照的方式写入到二进制文件中,默认的文件名为dump.rdb。</p><h3 id="save触发RDB"><a href="#save触发RDB" class="headerlink" title="save触发RDB"></a>save触发RDB</h3><p>该命令会阻塞当前Redis服务器，执行save命令期间，Redis不能处理其他命令，直到RDB过程完成为止。执行完成时候如果存在老的RDB文件，就把新的替代掉旧的。我们的客户端可能都是几万或者是几十万，这种方式显然不可取。</p><h3 id="bgsave触发RDB"><a href="#bgsave触发RDB" class="headerlink" title="bgsave触发RDB"></a>bgsave触发RDB</h3><p>执行该命令时，Redis会在后台异步进行快照操作，快照同时还可以响应客户端请求。</p><p>具体操作是Redis进程执行fork操作创建子进程，RDB持久化过程由子进程负责，完成后自动结束。阻塞只发生在fork阶段，一般时间很短。基本上 Redis 内部所有的RDB操作都是采用 bgsave 命令。</p><h3 id="自动触发RDB"><a href="#自动触发RDB" class="headerlink" title="自动触发RDB"></a>自动触发RDB</h3><p>自动触发是由我们的配置文件来完成的。在<strong>redis.conf</strong>配置文件中，里面有如下配置，我们可以去设置：</p><ol><li><strong>save：</strong>这里是用来配置触发 Redis的 RDB 持久化条件，也就是什么时候将内存中的数据保存到硬盘。比如“save m n”。表示m秒内数据集存在n次修改时，自动触发bgsave。</li></ol><p>默认如下配置：</p><blockquote><p>save 900 1 表示900 秒内如果至少有 1 个 key 的值变化，则保存<br>save 300 10表示300 秒内如果至少有 10 个 key 的值变化，则保存<br>save 60 10000表示60 秒内如果至少有 10000 个 key 的值变化，则保存</p></blockquote><p><strong>不需要持久化，那么你可以注释掉所有的 save 行来停用保存功能。</strong></p><ol start="2"><li><p><strong>stop-writes-on-bgsave-error ：</strong>默认值为yes。当启用了RDB且最后一次后台保存数据失败，Redis是否停止接收数据。这会让用户意识到数据没有正确持久化到磁盘上，否则没有人会注意到灾难（disaster）发生了。如果Redis重启了，那么又可以重新开始接收数据了</p></li><li><p><strong>rdbcompression ；</strong>默认值是yes。对于存储到磁盘中的快照，可以设置是否进行压缩存储。</p></li><li><p><strong>rdbchecksum ：</strong>默认值是yes。在存储快照后，我们还可以让redis使用CRC64算法来进行数据校验，但是这样做会增加大约10%的性能消耗，如果希望获取到最大的性能提升，可以关闭此功能。</p></li><li><p><strong>dbfilename ：</strong>设置快照的文件名，默认是 dump.rdb</p></li><li><p><strong>dir：</strong>设置快照文件的存放路径，这个配置项一定是个目录，而不能是文件名。</p></li></ol><h2 id="RDB-的优势和劣势"><a href="#RDB-的优势和劣势" class="headerlink" title="RDB 的优势和劣势"></a>RDB 的优势和劣势</h2><ol><li>优势</li></ol><ul><li> RDB文件紧凑，全量备份，非常适合用于进行备份和灾难恢复。</li><li>生成RDB文件的时候，redis主进程会fork()一个子进程来处理所有保存工作，主进程不需要进行任何磁盘IO操作。</li><li>RDB 在恢复大数据集时的速度比 AOF 的恢复速度要快。</li></ul><ol start="2"><li><p>劣势</p><p>RDB快照是一次全量备份，存储的是内存数据的二进制序列化形式，存储上非常紧凑。当进行快照持久化时，会开启一个子进程专门负责快照持久化，子进程会拥有父进程的内存数据，父进程修改内存子进程不会反应出来，所以在快照持久化期间修改的数据不会被保存，可能丢失数据。</p></li></ol><h2 id="AOF"><a href="#AOF" class="headerlink" title="AOF"></a>AOF</h2><p>AOF其实就是把每一次的更新操作都记录下来，以此来保证数据的持久化。</p><p><strong>文件重写原理</strong></p><p>每次的更新都需要记录下来这一次更新对的操作指令，那么随着时间的边长AOF文件的体积也会随之增加。所以为了压缩AOF的持久化文件，我们需要对压缩文件进行更新操作，也就是对持久化的Key保存最后一次的更新操作。</p><h3 id="AOF也有三种触发机制"><a href="#AOF也有三种触发机制" class="headerlink" title="AOF也有三种触发机制"></a>AOF也有三种触发机制</h3><p>（1）每修改同步always：同步持久化 每次发生数据变更会被立即记录到磁盘 性能较差但数据完整性比较好</p><p>（2）每秒同步everysec：异步操作，每秒记录 如果一秒内宕机，有数据丢失</p><p>（3）不同no：从不同步</p><table><thead><tr><th align="center">命令</th><th align="center">always</th><th align="center">eveysec</th><th align="center">no</th></tr></thead><tbody><tr><td align="center">优点</td><td align="center">不丢失数据</td><td align="center">每秒一次fsysc</td><td align="center">不管用</td></tr><tr><td align="center">缺点</td><td align="center">IO开销大</td><td align="center">丢失1秒钟的数据</td><td align="center">不可控</td></tr></tbody></table><h2 id="AOF的优缺点"><a href="#AOF的优缺点" class="headerlink" title="AOF的优缺点"></a>AOF的优缺点</h2><p>优点</p><ul><li>日志文件没有任何磁盘寻址的开销，写入性能非常高，文件不容易破损。</li><li>AOF日志文件即使过大的时候，出现后台重写操作，也不会影响客户端的读写。</li><li>AOF日志文件的命令通过非常可读的方式进行记录，这个特性非常适合做灾难性的误删除的紧急恢复。比如某人不小心用flushall命令清空了所有数据，只要这个时候后台rewrite还没有发生，那么就可以立即拷贝AOF文件，将最后一条flushall命令给删了，然后再将该AOF文件放回去，就可以通过恢复机制，自动恢复所有数据</li></ul><p>缺点</p><ul><li>对于同一份数据来说，AOF日志文件通常比RDB数据快照文件更大</li><li>AOF开启后，支持的写QPS会比RDB支持的写QPS低，因为AOF一般会配置成每秒fsync一次日志文件，当然，每秒一次fsync，性能也还是很高的</li><li>以前AOF发生过bug，就是通过AOF记录的日志，进行数据恢复的时候，没有恢复一模一样的数据出来。</li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;redis的持久化策略&quot;&gt;&lt;a href=&quot;#redis的持久化策略&quot; class=&quot;headerlink&quot; title=&quot;redis的持久化策略&quot;&gt;&lt;/a&gt;redis的持久化策略&lt;/h1&gt;&lt;h2 id=&quot;RDB&quot;&gt;&lt;a href=&quot;#RDB&quot; class=&quot;he</summary>
+      
+    
+    
+    
+    
+    <category term="redis" scheme="http://feelerice.github.io/tags/redis/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>redis的五种基本数据类型</title>
+    <link href="http://feelerice.github.io/2021/09/16/redis%E7%9A%84%E4%BA%94%E7%A7%8D%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/"/>
+    <id>http://feelerice.github.io/2021/09/16/redis%E7%9A%84%E4%BA%94%E7%A7%8D%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</id>
+    <published>2021-09-16T01:19:53.000Z</published>
+    <updated>2021-09-16T01:33:36.212Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="redis的五种基本数据类型"><a href="#redis的五种基本数据类型" class="headerlink" title="redis的五种基本数据类型"></a>redis的五种基本数据类型</h1><h2 id="string"><a href="#string" class="headerlink" title="string"></a>string</h2><blockquote><p>常用命令: set,get,decr,incr,mget 等。</p></blockquote><p>String数据结构是简单的key-value类型，value其实不仅可以是String，也可以是数字。 常规key-value缓存应用； 常规计数：微博数，粉丝数等。</p><h2 id="Hash"><a href="#Hash" class="headerlink" title="Hash"></a>Hash</h2><blockquote><p>常用命令: lpush,rpush,lpop,rpop,lrange等</p></blockquote><p>Hash 是一个 string 类型的 field 和 value 的映射表，hash 特别适合用于存储对象，后续操作的时候，你可以直接仅 仅修改这个对象中的某个字段的值。 比如我们可以Hash数据结构来存储用户信息，商品信息等等。比如下面我就用 hash 类型存放了我本人的一些信息：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">key=JavaUser293847</span><br><span class="line">value=&#123;</span><br><span class="line">    “id”: 1,</span><br><span class="line">    “name”: “feelerice”,</span><br><span class="line">    “age”: 22,</span><br><span class="line">    “location”: “Sichuan, Chengdu”</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="List"><a href="#List" class="headerlink" title="List"></a>List</h2><blockquote><p>常用命令: lpush,rpush,lpop,rpop,lrange等</p></blockquote><p>list 就是链表，Redis list 的应用场景非常多，也是Redis最重要的数据结构之一，比如微博的关注列表，粉丝列表， 消息列表等功能都可以用Redis的 list 结构来实现。 Redis list 的实现为一个双向链表，即可以支持反向查找和遍历，更方便操作，不过带来了部分额外的内存开销。 另外可以通过 lrange 命令，就是从某个元素开始读取多少个元素，可以基于 list 实现分页查询，这个很棒的一个功 能，基于 redis 实现简单的高性能分页，可以做类似微博那种下拉不断分页的东西（一页一页的往下走），性能高。</p><h2 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h2><blockquote><p>常用命令： sadd,spop,smembers,sunion 等</p></blockquote><p>set 对外提供的功能与list类似是一个列表的功能，特殊之处在于 set 是可以自动排重的。 当你需要存储一个列表数据，又不希望出现重复数据时，set是一个很好的选择，并且set提供了判断某个成员是否在 一个set集合内的重要接口，这个也是list所不能提供的。可以基于 set 轻易实现交集、并集、差集的操作。 比如：在微博应用中，可以将一个用户所有的关注人存在一个集合中，将其所有粉丝存在一个集合。Redis可以非常 方便的实现如共同关注、共同粉丝、共同喜好等功能。这个过程也就是求交集的过程，具体命令如下：</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sinterstore key1 key2 key3 将交集存在key1内</span><br></pre></td></tr></table></figure><h2 id="Sorted-Set"><a href="#Sorted-Set" class="headerlink" title="Sorted Set"></a>Sorted Set</h2><blockquote><p>常用命令： zadd,zrange,zrem,zcard等</p></blockquote><p>和set相比，sorted set增加了一个权重参数score，使得集合中的元素能够按score进行有序排列。 =</p><p>举例： 在直播系统中，实时排行信息包含直播间在线用户列表，各种礼物排行榜，弹幕消息（可以理解为按消息维 度的消息排行榜）等信息，适合使用 Redis 中的 SortedSet 结构进行存储。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;redis的五种基本数据类型&quot;&gt;&lt;a href=&quot;#redis的五种基本数据类型&quot; class=&quot;headerlink&quot; title=&quot;redis的五种基本数据类型&quot;&gt;&lt;/a&gt;redis的五种基本数据类型&lt;/h1&gt;&lt;h2 id=&quot;string&quot;&gt;&lt;a href=&quot;</summary>
+      
+    
+    
+    
+    
+    <category term="redis" scheme="http://feelerice.github.io/tags/redis/"/>
+    
+  </entry>
   
   <entry>
     <title>单例模式</title>
