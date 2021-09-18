@@ -6,7 +6,7 @@
   <link href="http://feelerice.github.io/atom.xml" rel="self"/>
   
   <link href="http://feelerice.github.io/"/>
-  <updated>2021-09-17T15:18:54.847Z</updated>
+  <updated>2021-09-18T06:40:24.551Z</updated>
   <id>http://feelerice.github.io/</id>
   
   <author>
@@ -15,6 +15,26 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>垃圾回收算法（上）</title>
+    <link href="http://feelerice.github.io/2021/09/18/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%8A%EF%BC%89/"/>
+    <id>http://feelerice.github.io/2021/09/18/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%8A%EF%BC%89/</id>
+    <published>2021-09-18T05:44:33.000Z</published>
+    <updated>2021-09-18T06:40:24.551Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="垃圾回收算法（上）"><a href="#垃圾回收算法（上）" class="headerlink" title="垃圾回收算法（上）"></a>垃圾回收算法（上）</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>说起垃圾回收（Garbage Collection，下文简称为GC），有不少人认为这项技术是为Java语言的伴生产物，其实垃圾回收的历史比Java的历史要长的多。在1960年诞生于麻省理工大学的Lisp是第一门开始使用内存动态分配和垃圾回收技术的语言。当Lisp还在胚胎阶段的时候，其作者就考虑过垃圾回收器应该要完成的三件事：</p><ul><li>那些内存需要进行回收？</li><li>什么时候进行回收？</li><li>如何回收？</li></ul><p>在Java内存运行时区域的各部分，其中<strong>程序计数器、虚拟机栈、本地方法栈</strong>3个区域随着线程的诞生而诞生，随线程的消亡而消亡。每一个虚拟机栈帧在编译时就已经确定了大小，因此这几个区域的内存分配和回收都具有确定性，在这几个区域就不需要考虑如何回收的问题了。</p><p>然而在Java的<strong>堆内存</strong>和<strong>方法区</strong>这两个区域则有着很显著的不确定性：一个接口的不同实现类需要的内存可能会不一样，一个方法所指向的不同条件分支所需要的内存也可能不一样，只有在运行期间，我们在知道程序究竟会创建哪些对象，分配多少内存，这部分内存的分配与回收都是动态的。所以我们垃圾回收也就更多的考虑这一部分的内存。</p><h2 id="那些内存需要回收？"><a href="#那些内存需要回收？" class="headerlink" title="那些内存需要回收？"></a>那些内存需要回收？</h2><p>在Java堆之中存放着机会Java世界的所有对象实例，垃圾回收器在对这些对象进行回收的时候，有一件事是必须要确认的，那就是“对象是否死去”，死去的含义就是：不可能在被任何地方所使用的对象。下面将会介绍两种判断对象是否死去的算法：引用计数算法，可达性分析算法。</p><h2 id="引用计数算法"><a href="#引用计数算法" class="headerlink" title="引用计数算法"></a>引用计数算法</h2><blockquote><p>在对象中添加一个引用计数器，每当有一个地方引用她的时候，计数器就进行加1操作；当引用失效的时候，计数器就进行减1的操作。当计数器的值等于0的对象就是不可能在被使用的</p></blockquote><p>优点：</p><ul><li>原理简单</li><li>判断效率高</li></ul><p>但是Java绝大部分的虚拟机都不采用这种算法，这是由于当内存中的两个对象产生循环引用的时候，引用计数算法本身是无法判断的。这需要Java虚拟机重新提供一种方式用来判断对象是否存在循环引用。</p><h2 id="可达性分析算法"><a href="#可达性分析算法" class="headerlink" title="可达性分析算法"></a>可达性分析算法</h2><p>对于市面上的主流商用程序语言（Java、C#）的内存管理子系统都是采用可达性分析算法来判断对象是否存活的。</p><blockquote><p>通过程序中的“GC Root”根对象进行引用向下检索，搜索过程所走过的路径被称之为“引用链”（Reference Chain），如果对象不可以被搜索到，就证明对象不可达。</p></blockquote><p>在Java语言中，固定座位GC Root的对象包括以下几种：</p><ul><li>在虚拟机栈（栈帧中的本地变量表）中所引用的对象，譬如当前方法所用的参数，局部变量，临时变量等</li><li>在方法区中类静态属性引用的变量，譬如Java类的引用类型静态变量</li><li>子啊方法区中常量所引用的对象，譬如字符串常量池（String table）里面的引用</li><li>在本地方法栈中JNI（Native方法）引用的变量</li><li>Java虚拟机内部的引用，如基本数据类型所对应的Class对象，一些常驻的异常对象（NullPointException）等，还有系统类加载器</li><li>所有被同步锁（synchronized关键字）持有的对象</li><li>反映Java虚拟机内部情况的JMXBean、JVMTI中注册的回调，本地代码缓存等。</li></ul><p><img src="/2021/09/18/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E7%AE%97%E6%B3%95%EF%BC%88%E4%B8%8A%EF%BC%89/access.png" alt="利用可达性分析算法判断对象是否可以回收"></p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;垃圾回收算法（上）&quot;&gt;&lt;a href=&quot;#垃圾回收算法（上）&quot; class=&quot;headerlink&quot; title=&quot;垃圾回收算法（上）&quot;&gt;&lt;/a&gt;垃圾回收算法（上）&lt;/h1&gt;&lt;h2 id=&quot;概述&quot;&gt;&lt;a href=&quot;#概述&quot; class=&quot;headerlink&quot; </summary>
+      
+    
+    
+    
+    
+  </entry>
   
   <entry>
     <title>对象的内存布局</title>
