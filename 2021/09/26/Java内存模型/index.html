@@ -1,0 +1,207 @@
+<!DOCTYPE html><html lang="en" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Java内存模型 | 博客</title><meta name="keywords" content="JVM,JMM"><meta name="author" content="feelerice"><meta name="copyright" content="feelerice"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Java内存模型简介《Java虚拟机规范》一书中曾经视图定义一种“Java内存模型”来屏蔽各种硬件和操作系统的内存访问差异，以实现Java程序能够在各种不同的平台下能够达到一致的内存访问效果。在此之前，主流编程语言(C、C++)都是直接使用物理硬件和操作系统的内存模型。因此，对于不同平台的程序，很有可能出现在一套平台上可以正常运行而在另外一套平台上却不能够正常运行。 定义一套内存模型并不是一件容易">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java内存模型">
+<meta property="og:url" content="http://feelerice.github.io/2021/09/26/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="博客">
+<meta property="og:description" content="Java内存模型简介《Java虚拟机规范》一书中曾经视图定义一种“Java内存模型”来屏蔽各种硬件和操作系统的内存访问差异，以实现Java程序能够在各种不同的平台下能够达到一致的内存访问效果。在此之前，主流编程语言(C、C++)都是直接使用物理硬件和操作系统的内存模型。因此，对于不同平台的程序，很有可能出现在一套平台上可以正常运行而在另外一套平台上却不能够正常运行。 定义一套内存模型并不是一件容易">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-09-26T02:39:18.000Z">
+<meta property="article:modified_time" content="2021-09-26T07:03:58.951Z">
+<meta property="article:author" content="feelerice">
+<meta property="article:tag" content="JVM">
+<meta property="article:tag" content="JMM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://feelerice.github.io/2021/09/26/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: 'Copy successfully',
+    error: 'Copy error',
+    noSupport: 'The browser does not support'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Java内存模型',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-09-26 15:03:58'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+    const detectApple = () => {
+      if (GLOBAL_CONFIG_SITE.isHome && /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+    })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">11</div></a></div></div></div><hr/></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">博客</a></span><div id="menus"><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">Java内存模型</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2021-09-26T02:39:18.000Z" title="Created 2021-09-26 10:39:18">2021-09-26</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2021-09-26T07:03:58.951Z" title="Updated 2021-09-26 15:03:58">2021-09-26</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="Java内存模型"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="Java内存模型"><a href="#Java内存模型" class="headerlink" title="Java内存模型"></a>Java内存模型</h1><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>《Java虚拟机规范》一书中曾经视图定义一种“Java内存模型”来屏蔽各种硬件和操作系统的内存访问差异，以实现Java程序能够在各种不同的平台下能够达到一致的内存访问效果。在此之前，主流编程语言(C、C++)都是直接使用物理硬件和操作系统的内存模型。因此，对于不同平台的程序，很有可能出现在一套平台上可以正常运行而在另外一套平台上却不能够正常运行。</p>
+<p>定义一套内存模型并不是一件容易的事，这个模型必须足够严谨，才能让Java的并发内存访问操作不会产生歧义；但是也必须定义的足够宽松，使得虚拟机的实现能有足够的自由空间去利用硬件的各种特性来获取更好的执行速度。经过长时间的验证和补修，知道JDK5发布后Java内存模型才终于成熟。完善起来了。</p>
+<h2 id="主内存和工作内存"><a href="#主内存和工作内存" class="headerlink" title="主内存和工作内存"></a>主内存和工作内存</h2><p>Java内存模型的主要目的是定义程序中各种变量的访问规则，即关注在虚拟机中吧变量赋值到内存和从内存中取出变量值这样的底层操作。</p>
+<p>Java内存模型规定了所有变量都存放在主内存（Main Menory）中。每条线程有自己的工作内存（Working Memory），线程的工作内存中保存了被该线程使用的变量的主内存副本，线程堆变量的所有操作（读取，赋值）都必须在工作内存中进行，线程间变量值的传递觉需要通过内存来完成，线程。主内存、工作内存之间的交互关系如下所示：</p>
+<p><img src="/2021/09/26/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/jmm.png"></p>
+<h2 id="内存间交互操作"><a href="#内存间交互操作" class="headerlink" title="内存间交互操作"></a>内存间交互操作</h2><p>关于主内存与工作内存之间的具体交互，Java内存模型定义了以下8中操作来完成。Java虚拟机必须保证下面提及的每一种操作都是原子的，不可再分的（double、long有特例）</p>
+<ol>
+<li>lock（锁定）：作用于主内存的变量，他把一个变量标识为线程独占的状态</li>
+<li>unlock（解锁）：作用于主内存的变量，他把一个处于lock状态的变量释放出了，释放后的变量才能被其他线程lock。</li>
+<li>read（读取）：作用于主内存中的变量，他把一个变量的值从主内存传输到线程的工作内存中</li>
+<li>write（写入）：作用域主内存，他把一个变量从工作内存中写回主内存</li>
+<li>load（载入）：作用域工作内存，他把read操作获取的值放入工作内存</li>
+<li>store（存储）：作用域工作内存的变量，他把工作内存中的一个变量的值传送到主内存中</li>
+<li>use（使用）：作呕能够与工作内存的变量，他把工作内存中的一个值赋予给执行引擎，当执行引擎虚拟机遇到一个需要使用变量的值的字节码指令时会执行这个操作。</li>
+<li>assign（赋值）：作用域工作内存的变量，他把一个从执行引擎接受的值赋给工作内存的变量</li>
+</ol>
+<p>除此之外，Java内存模型还规定了执行上述8中基本操作时必须满足如下规则：</p>
+<ul>
+<li>不允许read和load、store和write操作之一单独出现</li>
+<li>不允许一个线程丢弃他最近的assgin操作</li>
+<li>不允许一个线程不发生assgin操作的时候读取一个变量</li>
+<li>一个变量在同一时刻只允许一个线程对其进行lock操作，但是一条线程可以对一个变量进行多次lock操作，但之后只有执行了相同数量的unlock操作之后，其他线程才能执行lock操作</li>
+<li>如果对一个变量先没有被lock操作，就不允许有unlock操作</li>
+<li>对一个变量进行unlock操作之前不许吧变量同步到主内存中（store、write操作）</li>
+<li>一个变量只能在主内存中“诞生”，不允许在工作内存中直接是哦那个一个未被初始化（load。assign）的变量</li>
+<li>如果一个变量执行lock操作，那将会清空工作内存中此变量的值，再执行引擎是哦那个到这个变量之前，需要重新load或assign操作已初始化变量的值</li>
+</ul>
+<p>上面8条内存访问以及上述规则限定，再加上一些专门用于volatile的特殊规则，就能够精准描述出Java程序中那些内存访问操作在并发下是安全的。</p>
+<h2 id="volatile关键字"><a href="#volatile关键字" class="headerlink" title="volatile关键字"></a>volatile关键字</h2><p>关键字volatile可以说时Java虚拟机提供的最轻量级的同步机制，但是他并不容易被正确，完整的理解。Java内存模型为volatile专门定义了一些特殊的访问规则，在介绍这些比较拗口的规则定义之前，先用一些不那么正式，但通俗易懂的语言介绍这个关键字的作用</p>
+<p>当一个变量被定义为volatile之后，它将会具有两条特性</p>
+<h3 id="可见性"><a href="#可见性" class="headerlink" title="可见性"></a>可见性</h3><p>保证此变量对其他所有线程的可见性，这里的“可见性”是指当一条线程修改了这个变量的值，新值对于其他线程来说都是立刻得知的。</p>
+<p>但是对于volatile的可见性，经常被人误解为：“volatile变量对所有线程是立即可见的，堆volatile变量所有的读写操作都能立即反应到其他线程中，换一句换锁，volatile变量在各个线程中是一致的，所以基于volatile变量运算在并发下是线程安全的”。我们可以通过以下代码来验证他的正误：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VolatileTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">volatile</span> <span class="keyword">int</span> num = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> NUMBER = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">increase</span><span class="params">()</span></span>&#123;</span><br><span class="line">        num ++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        CountDownLatch downLatch = <span class="keyword">new</span> CountDownLatch(NUMBER);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; NUMBER; i++) &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; <span class="number">1000</span>; j++) &#123;</span><br><span class="line">                    increase();</span><br><span class="line">                &#125;</span><br><span class="line">                downLatch.countDown();</span><br><span class="line">            &#125;).start();</span><br><span class="line">        &#125;</span><br><span class="line">        downLatch.await();</span><br><span class="line">        System.out.println(num);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们使用了是个线程，每个线程调用1000次increase()方法，如果volatile时线程安全的，那么最后输出的结果应该时10000。实际上我们很难有成功输出10000的时候，这是由于在对num++这个操作的时候，我们可以通过字节码来查看：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">increase</span><span class="params">()</span></span>;</span><br><span class="line">   Code:</span><br><span class="line">      <span class="number">0</span>: getstatic     #<span class="number">2</span>                  <span class="comment">// Field num:I</span></span><br><span class="line">      <span class="number">3</span>: iconst_1</span><br><span class="line">      <span class="number">4</span>: iadd</span><br><span class="line">      <span class="number">5</span>: putstatic     #<span class="number">2</span>                  <span class="comment">// Field num:I</span></span><br><span class="line">      <span class="number">8</span>: <span class="keyword">return</span></span><br></pre></td></tr></table></figure>
+
+<p>我们可以看到在increase()方法的字节码指令，num++被分解成了四步操作，这导致了每一步操作都有可能被其他线程所拦截。所以说volatile只能保证可见性，而不能保证线程安全。</p>
+<h3 id="指令重排序"><a href="#指令重排序" class="headerlink" title="指令重排序"></a>指令重排序</h3><p>禁止指令重排序优化，普通变量仅会保证在该方法的执行过程中所有依赖赋值结果的地方都能获取到正确的结果，而不能保证变量赋值操作的顺序于程序代码中执行顺序是一样的。</p>
+<h2 id="先行发生原则"><a href="#先行发生原则" class="headerlink" title="先行发生原则"></a>先行发生原则</h2><p>如果Java内存模型中所有的有序性都依赖于volatile和synchronized来完成，那么很多操作就会变得非常罗嗦，但我们在编写Java代码的时候并没有感受到这一点，这是因为Java语言中有一个“先行发生”（Happens-Before）原则。</p>
+<p>下面我们举一个例子来说明：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 以下操作在A线程进行</span></span><br><span class="line">i = <span class="number">1</span></span><br><span class="line"><span class="comment">//以下操作在B线程进行</span></span><br><span class="line">j = i    </span><br><span class="line"><span class="comment">//以下操作在C线程中执行</span></span><br><span class="line">i = <span class="number">2</span></span><br></pre></td></tr></table></figure>
+
+<p>假设A线程先于B线程执行，那么我们可以确定j = 1，这是因为C线程还没有执行和A线程执行完全之后的值可以被B线程观测到。但是现在如果C线程在A、B线程之间执行，那么j的值就不确定了，他可能时1也可能是2，这个时候B线程就有线程安全问题了。</p>
+<p>下面时Java内训模型下的一些“天然的”先行发生关系，这些先行发生关系无需任何同步器协助就已经存在，可以在编码中直接使用。如果两个操作之间的关系不在此列，并且无法从下列规则中导出来，则它们就没有顺序性保障，虚拟机可以对他们随意的进行重排序。</p>
+<ul>
+<li><strong>程序次序规则</strong>：在一个线程内，按照控制流顺序，书写在前面的操作先行发生于后面的操作。注意这里说的是控制流顺序而不是程序代码顺序，因为要考虑分支，循环等结构</li>
+<li><strong>管程锁定规则</strong>：一个unlock操作先行发生于对同一个锁的lock操作。这里必须强调的是“同一个锁”，而后面指的是时间上的先后顺序</li>
+<li><strong>volatile变量规则</strong>：对一个volatile变量的写操作先行发生于后面对这个变量的读操作，这里的后面指的是时间上的先后顺序</li>
+<li><strong>线程启动规则</strong>：Thread对象的start()方法先行发生于此线程的每一个动作</li>
+<li><strong>线程终止规则</strong>：线程中所有操作都先行发生于此线程的终止</li>
+<li><strong>线程中断规则</strong>：对线程的interrupt()方法的调用先行发生于被中断线程的代码检测到中断事件的发生</li>
+<li><strong>对象终结规则</strong>：一个对象的初始化完成先于他的finalize()方法</li>
+<li><strong>传递性</strong>：如果操作A先行发生于操作B，操作B先行发生于操作C，那么就可以得出操作A先行发生于操作C</li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">feelerice</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="http://feelerice.github.io/2021/09/26/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/">http://feelerice.github.io/2021/09/26/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/JVM/">JVM</a><a class="post-meta__tags" href="/tags/JMM/">JMM</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="next-post pull-full"><a href="/2021/09/26/CAS/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">CAS与volatile关键字</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/2021/09/25/垃圾回收器/" title="垃圾回收器"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-25</div><div class="title">垃圾回收器</div></div></a></div><div><a href="/2021/09/17/对象的内存布局/" title="对象的内存布局"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-17</div><div class="title">对象的内存布局</div></div></a></div><div><a href="/2021/09/19/垃圾回收算法（下）/" title="垃圾回收算法（下）"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-19</div><div class="title">垃圾回收算法（下）</div></div></a></div><div><a href="/2021/09/18/垃圾回收算法（上）/" title="垃圾回收算法（上）"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-18</div><div class="title">垃圾回收算法（上）</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="https://i.loli.net/2021/02/24/5O1day2nriDzjSu.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">feelerice</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">14</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length-num">11</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Catalog</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B"><span class="toc-number">1.</span> <span class="toc-text">Java内存模型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%AE%80%E4%BB%8B"><span class="toc-number">1.1.</span> <span class="toc-text">简介</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BB%E5%86%85%E5%AD%98%E5%92%8C%E5%B7%A5%E4%BD%9C%E5%86%85%E5%AD%98"><span class="toc-number">1.2.</span> <span class="toc-text">主内存和工作内存</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%86%85%E5%AD%98%E9%97%B4%E4%BA%A4%E4%BA%92%E6%93%8D%E4%BD%9C"><span class="toc-number">1.3.</span> <span class="toc-text">内存间交互操作</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#volatile%E5%85%B3%E9%94%AE%E5%AD%97"><span class="toc-number">1.4.</span> <span class="toc-text">volatile关键字</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="toc-number">1.4.1.</span> <span class="toc-text">可见性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%8C%87%E4%BB%A4%E9%87%8D%E6%8E%92%E5%BA%8F"><span class="toc-number">1.4.2.</span> <span class="toc-text">指令重排序</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%88%E8%A1%8C%E5%8F%91%E7%94%9F%E5%8E%9F%E5%88%99"><span class="toc-number">1.5.</span> <span class="toc-text">先行发生原则</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/09/26/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" title="Java内存模型"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java内存模型"/></a><div class="content"><a class="title" href="/2021/09/26/Java%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B/" title="Java内存模型">Java内存模型</a><time datetime="2021-09-26T02:39:18.000Z" title="Created 2021-09-26 10:39:18">2021-09-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/26/CAS/" title="CAS与volatile关键字"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CAS与volatile关键字"/></a><div class="content"><a class="title" href="/2021/09/26/CAS/" title="CAS与volatile关键字">CAS与volatile关键字</a><time datetime="2021-09-26T00:38:39.000Z" title="Created 2021-09-26 08:38:39">2021-09-26</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/25/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" title="垃圾回收器"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="垃圾回收器"/></a><div class="content"><a class="title" href="/2021/09/25/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" title="垃圾回收器">垃圾回收器</a><time datetime="2021-09-25T07:40:09.000Z" title="Created 2021-09-25 15:40:09">2021-09-25</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/24/Java%E9%94%81/" title="Java锁"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Java锁"/></a><div class="content"><a class="title" href="/2021/09/24/Java%E9%94%81/" title="Java锁">Java锁</a><time datetime="2021-09-24T11:58:04.000Z" title="Created 2021-09-24 19:58:04">2021-09-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/09/24/%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89%E4%B8%8E%E7%8A%B6%E6%80%81/" title="线程的定义与状态"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="线程的定义与状态"/></a><div class="content"><a class="title" href="/2021/09/24/%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%AE%9A%E4%B9%89%E4%B8%8E%E7%8A%B6%E6%80%81/" title="线程的定义与状态">线程的定义与状态</a><time datetime="2021-09-24T07:48:12.000Z" title="Created 2021-09-24 15:48:12">2021-09-24</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By feelerice</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle between single-column and double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
