@@ -5,13 +5,13 @@
 <meta property="og:site_name" content="博客">
 <meta property="og:description" content="MySQL锁与事务事务事务是一个单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。其具有以下四个特性  原子性（Atomic）：事务包含的所有操作要不全部成功，要不全部失败。 一致性（Consistency）：是指数据库中的数据应满足完整性约束，确保数据库的状态转向另一个一致的状态，如：用户A和用户B一共2000元，那么无论AB怎">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://feelerice.github.io/img/default_cover.jpg">
+<meta property="og:image" content="http://feelerice.github.io/img/default_cover6.jpg">
 <meta property="article:published_time" content="2021-09-27T07:08:40.000Z">
 <meta property="article:modified_time" content="2021-10-09T03:37:02.199Z">
 <meta property="article:author" content="我吃冰淇淋">
 <meta property="article:tag" content="mysql">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://feelerice.github.io/img/default_cover.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://feelerice.github.io/2021/09/27/MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+<meta name="twitter:image" content="http://feelerice.github.io/img/default_cover6.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="http://feelerice.github.io/2021/09/27/MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
   root: '/',
   algolia: undefined,
   localSearch: undefined,
@@ -148,7 +148,7 @@
     }
     detectApple()
     })(window)</script><meta name="generator" content="Hexo 5.4.0"><link rel="alternate" href="/atom.xml" title="博客" type="application/atom+xml">
-</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/./img/default_cover.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySQL锁与事务</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-27T07:08:40.000Z" title="发表于 2021-09-27 15:08:40">2021-09-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-09T03:37:02.199Z" title="更新于 2021-10-09 11:37:02">2021-10-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySQL锁与事务"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="MySQL锁与事务"><a href="#MySQL锁与事务" class="headerlink" title="MySQL锁与事务"></a>MySQL锁与事务</h1><h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务是一个单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。其具有以下四个特性</p>
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">82</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">23</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/./img/default_cover6.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">博客</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首頁</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">MySQL锁与事务</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-09-27T07:08:40.000Z" title="发表于 2021-09-27 15:08:40">2021-09-27</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-10-09T03:37:02.199Z" title="更新于 2021-10-09 11:37:02">2021-10-09</time></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="MySQL锁与事务"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="MySQL锁与事务"><a href="#MySQL锁与事务" class="headerlink" title="MySQL锁与事务"></a>MySQL锁与事务</h1><h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><p>事务是一个单独的隔离操作：事务中的所有命令都会序列化、按顺序地执行。事务在执行的过程中，不会被其他客户端发送来的命令请求所打断。其具有以下四个特性</p>
 <ul>
 <li>原子性（Atomic）：事务包含的所有操作要不全部成功，要不全部失败。</li>
 <li>一致性（Consistency）：是指数据库中的数据应满足完整性约束，确保数据库的状态转向另一个一致的状态，如：用户A和用户B一共2000元，那么无论AB怎么进行转账操作，最后他们的钱总和也一定要2000元</li>
@@ -158,210 +158,229 @@
 <h2 id="事务并发问题"><a href="#事务并发问题" class="headerlink" title="事务并发问题"></a>事务并发问题</h2><ul>
 <li>更新丢失：一个事物的更新覆盖了另一个事物的更新</li>
 </ul>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">取款事务</th>
-<th align="center">存款事务</th>
+<th style="text-align:center">取款事务</th>
+<th style="text-align:center">存款事务</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">开始事务</td>
-<td align="center">开始事务</td>
+<tbody>
+<tr>
+<td style="text-align:center">开始事务</td>
+<td style="text-align:center">开始事务</td>
 </tr>
 <tr>
-<td align="center">查询账户余额100元</td>
-<td align="center"></td>
+<td style="text-align:center">查询账户余额100元</td>
+<td style="text-align:center"></td>
 </tr>
 <tr>
-<td align="center"></td>
-<td align="center">查询转账余额100</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">查询转账余额100</td>
 </tr>
 <tr>
-<td align="center"></td>
-<td align="center">存入20元，余额为120元</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">存入20元，余额为120元</td>
 </tr>
 <tr>
-<td align="center"></td>
-<td align="center">提交事务</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">提交事务</td>
 </tr>
 <tr>
-<td align="center">取出10元，余额改为90元</td>
-<td align="center"></td>
+<td style="text-align:center">取出10元，余额改为90元</td>
+<td style="text-align:center"></td>
 </tr>
 <tr>
-<td align="center">回滚事务，余额恢复100元</td>
-<td align="center">更新丢失</td>
+<td style="text-align:center">回滚事务，余额恢复100元</td>
+<td style="text-align:center">更新丢失</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <ul>
 <li>脏读：一个事务中读取到了另一个事务没有提交的数据。</li>
 </ul>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">事务1</th>
-<th align="center">事务2</th>
+<th style="text-align:center">事务1</th>
+<th style="text-align:center">事务2</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">开始事务</td>
-<td align="center">开始事务</td>
+<tbody>
+<tr>
+<td style="text-align:center">开始事务</td>
+<td style="text-align:center">开始事务</td>
 </tr>
 <tr>
-<td align="center"></td>
-<td align="center">修改余额为100</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">修改余额为100</td>
 </tr>
 <tr>
-<td align="center">查询余额：100</td>
-<td align="center">rollback</td>
+<td style="text-align:center">查询余额：100</td>
+<td style="text-align:center">rollback</td>
 </tr>
 <tr>
-<td align="center">更新余额：100+200=300</td>
-<td align="center"></td>
+<td style="text-align:center">更新余额：100+200=300</td>
+<td style="text-align:center"></td>
 </tr>
 <tr>
-<td align="center">提交事务</td>
-<td align="center"></td>
+<td style="text-align:center">提交事务</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <ul>
 <li>不可重复读：事务中两次读取的数据不一致（被其他事务修改过）</li>
 </ul>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">事务1</th>
-<th align="center">事务2</th>
+<th style="text-align:center">事务1</th>
+<th style="text-align:center">事务2</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">开始事务</td>
-<td align="center">开始事务</td>
+<tbody>
+<tr>
+<td style="text-align:center">开始事务</td>
+<td style="text-align:center">开始事务</td>
 </tr>
 <tr>
-<td align="center">查询余额：200</td>
-<td align="center">更新余额：300元</td>
+<td style="text-align:center">查询余额：200</td>
+<td style="text-align:center">更新余额：300元</td>
 </tr>
 <tr>
-<td align="center"></td>
-<td align="center">提交事务</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">提交事务</td>
 </tr>
 <tr>
-<td align="center">查询余额：300</td>
-<td align="center"></td>
+<td style="text-align:center">查询余额：300</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <ul>
 <li>幻读：事务第二次读取数据和第一次读取的数据条数不符合</li>
 </ul>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">事务1</th>
-<th align="center">事务2</th>
+<th style="text-align:center">事务1</th>
+<th style="text-align:center">事务2</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">开始事务</td>
-<td align="center">开始事务</td>
+<tbody>
+<tr>
+<td style="text-align:center">开始事务</td>
+<td style="text-align:center">开始事务</td>
 </tr>
 <tr>
-<td align="center">查询id为2数据：3条</td>
-<td align="center"></td>
+<td style="text-align:center">查询id为2数据：3条</td>
+<td style="text-align:center"></td>
 </tr>
 <tr>
-<td align="center"></td>
-<td align="center">插入一条id为2的数据</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">插入一条id为2的数据</td>
 </tr>
 <tr>
-<td align="center"></td>
-<td align="center">提交事务</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">提交事务</td>
 </tr>
 <tr>
-<td align="center">更新id为2的数据：成功4条</td>
-<td align="center"></td>
+<td style="text-align:center">更新id为2的数据：成功4条</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">事务隔离级别</th>
-<th align="center">更新丢失</th>
-<th align="center">脏读</th>
-<th align="center">不可重读</th>
-<th align="center">幻读</th>
+<th style="text-align:center">事务隔离级别</th>
+<th style="text-align:center">更新丢失</th>
+<th style="text-align:center">脏读</th>
+<th style="text-align:center">不可重读</th>
+<th style="text-align:center">幻读</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">READ-UNCOMITED</td>
-<td align="center">×</td>
-<td align="center">√</td>
-<td align="center">√</td>
-<td align="center">√</td>
+<tbody>
+<tr>
+<td style="text-align:center">READ-UNCOMITED</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
 </tr>
 <tr>
-<td align="center">READ-COMMITED</td>
-<td align="center">×</td>
-<td align="center">×</td>
-<td align="center">√</td>
-<td align="center">√</td>
+<td style="text-align:center">READ-COMMITED</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">√</td>
+<td style="text-align:center">√</td>
 </tr>
 <tr>
-<td align="center">REPEATABLE-READ</td>
-<td align="center">×</td>
-<td align="center">×</td>
-<td align="center">×</td>
-<td align="center">√</td>
+<td style="text-align:center">REPEATABLE-READ</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">√</td>
 </tr>
 <tr>
-<td align="center">SERIALIZABLE</td>
-<td align="center">×</td>
-<td align="center">×</td>
-<td align="center">×</td>
-<td align="center">×</td>
+<td style="text-align:center">SERIALIZABLE</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
+<td style="text-align:center">×</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h2 id="隔离性的实现"><a href="#隔离性的实现" class="headerlink" title="隔离性的实现"></a>隔离性的实现</h2><p>InnoDB数据库隔离性的实现是由MVCC（多版本并发控制来进行实现的），MVCC在InnoDB的实现主要是依靠undo log和read View来进行实现。</p>
 <h3 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h3><ul>
 <li>当前读：读取的是当前最新的数据</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">select ... for update;</span><br><span class="line">select ... lock in share mode;</span><br><span class="line">update ... ;</span><br><span class="line">insert ... ;</span><br><span class="line">delete ... ;</span><br></pre></td></tr></table></figure>
-
 <ul>
 <li>快照读：读取的是快照中的数据</li>
 </ul>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select ... ;</span><br></pre></td></tr></table></figure>
-
 <h3 id="隐藏列"><a href="#隐藏列" class="headerlink" title="隐藏列"></a>隐藏列</h3><p>在数据行中，InnoDB将数据分为两个部分：用户可见部分和不可见部分</p>
 <ul>
 <li>用户可见部分：也就是用户定义一张表的时候锁规定的数据列</li>
 <li>用户不可见部分：有InnoDB数据库生成的列，其有三列分别为</li>
 </ul>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">列名</th>
-<th align="center">长度</th>
-<th align="center">作用</th>
+<th style="text-align:center">列名</th>
+<th style="text-align:center">长度</th>
+<th style="text-align:center">作用</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">DB_ROLL_PTR</td>
-<td align="center">7</td>
-<td align="center">用于指向未被修改前的数据</td>
+<tbody>
+<tr>
+<td style="text-align:center">DB_ROLL_PTR</td>
+<td style="text-align:center">7</td>
+<td style="text-align:center">用于指向未被修改前的数据</td>
 </tr>
 <tr>
-<td align="center">DB_ROW_ID</td>
-<td align="center">6</td>
-<td align="center">隐藏ID，在InnoDB中创建表如果没有主键也没有唯一行则会使用这个列当作隐藏主键用于创建聚簇索引</td>
+<td style="text-align:center">DB_ROW_ID</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">隐藏ID，在InnoDB中创建表如果没有主键也没有唯一行则会使用这个列当作隐藏主键用于创建聚簇索引</td>
 </tr>
 <tr>
-<td align="center">DB_TRX_ID</td>
-<td align="center">6</td>
-<td align="center">事务ID，用于记录当前记录是由哪一个事务进行修改的。</td>
+<td style="text-align:center">DB_TRX_ID</td>
+<td style="text-align:center">6</td>
+<td style="text-align:center">事务ID，用于记录当前记录是由哪一个事务进行修改的。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h3 id="undo-log"><a href="#undo-log" class="headerlink" title="undo log"></a>undo log</h3><p>在InnoDB数据库中用户每对数据进行修改一次，就会将修改之前的数据存放在InnoDB的undo log中。</p>
 <h3 id="read-View"><a href="#read-View" class="headerlink" title="read View"></a>read View</h3><p>读视图，在RR与RC隔离级别下。生成read View的时机不同：</p>
 <ul>
@@ -369,26 +388,30 @@
 <li>RR：只会生成第一次的快照读</li>
 </ul>
 <p>read View为每一个事务都有各自一份的数据，他的组成有以下几个部分</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
-<th align="center">名称</th>
-<th align="center">作用</th>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">作用</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="center">trx_list</td>
-<td align="center">记录生成read View时刻的事务有哪些</td>
+<tbody>
+<tr>
+<td style="text-align:center">trx_list</td>
+<td style="text-align:center">记录生成read View时刻的事务有哪些</td>
 </tr>
 <tr>
-<td align="center">up_limit_ID</td>
-<td align="center">当前活跃事务的最小值</td>
+<td style="text-align:center">up_limit_ID</td>
+<td style="text-align:center">当前活跃事务的最小值</td>
 </tr>
 <tr>
-<td align="center">low_limit_ID</td>
-<td align="center">未生成事务的最小ID</td>
+<td style="text-align:center">low_limit_ID</td>
+<td style="text-align:center">未生成事务的最小ID</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
+</div>
 <h3 id="MVCC"><a href="#MVCC" class="headerlink" title="MVCC"></a>MVCC</h3><p>MVCC也叫多版本并发控制，他的实现也就是通过上面的几个知识一起实现的。</p>
 <h2 id="持久性的实现"><a href="#持久性的实现" class="headerlink" title="持久性的实现"></a>持久性的实现</h2><h3 id="IO知识"><a href="#IO知识" class="headerlink" title="IO知识"></a>IO知识</h3><p>在计算机上的IO读取分为</p>
 <ul>
@@ -410,7 +433,7 @@
 <p>那为什么必须要先写日志呢？可不可以不写日志，直接将数据写入磁盘？原则上是可以的，只不过会产生一些问题，数据修改会产生随机IO，但日志是顺序IO，append方式顺序写，是一种串行的方式，这样才能充分利用磁盘的性能。</p>
 <p><strong>Force-log-at-commit</strong></p>
 <p>这一点也就是前文提到的如何保证事务的持久性的内容，这里再次总结一下，与上面的内容相呼应。在一个事务中可以修改多个页，Write-Ahead Log 可以保证单个数据页的一致性，但是无法保证事务的持久性，Force-log-at-commit 要求当一个事务提交时，其产生所有的mini-transaction 日志必须刷新到磁盘中，若日志刷新完成后，在缓冲池中的页刷新到持久化存储设备前数据库发生了宕机，那么数据库重启时，可以通过日志来保证数据的完整性。</p>
-<h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><p>InnoDB是事务的存储引擎，其通过<strong>Force Log at Commit 机制</strong>实现事务的持久性，即当事务提交时，先将 redo log buffer 写入到 redo log file 进行持久化，待事务的commit操作完成时才算完成。这种做法也被称为 **Write-Ahead Log(预先日志持久化)**，在持久化一个数据页之前，先将内存中相应的日志页持久化。</p>
+<h3 id="redo-log"><a href="#redo-log" class="headerlink" title="redo log"></a>redo log</h3><p>InnoDB是事务的存储引擎，其通过<strong>Force Log at Commit 机制</strong>实现事务的持久性，即当事务提交时，先将 redo log buffer 写入到 redo log file 进行持久化，待事务的commit操作完成时才算完成。这种做法也被称为 <strong>Write-Ahead Log(预先日志持久化)</strong>，在持久化一个数据页之前，先将内存中相应的日志页持久化。</p>
 <p>为了保证每次日志都写入redo log file，在每次将redo buffer写入redo log file之后，默认情况下，InnoDB存储引擎都需要调用一次 <strong>fsync操作</strong>,因为重做日志打开并没有 O_DIRECT选项，所以重做日志先写入到文件系统缓存。为了确保重做日志写入到磁盘，必须进行一次 fsync操作。fsync是一种系统调用操作，其fsync的效率取决于磁盘的性能，因此磁盘的性能也影响了事务提交的性能，也就是数据库的性能。<br> <strong>(O_DIRECT选项是在Linux系统中的选项，使用该选项后，对文件进行直接IO操作，不经过文件系统缓存，直接写入磁盘)</strong></p>
 <p>上面提到的<strong>Force Log at Commit机制</strong>就是靠InnoDB存储引擎提供的参数 <code>innodb_flush_log_at_trx_commit</code>来控制的，该参数可以控制 redo log刷新到磁盘的策略，设置该参数值也可以允许用户设置非持久性的情况发生，具体如下：</p>
 <ul>
@@ -420,4 +443,49 @@
 </ul>
 <h2 id="原子性的实现"><a href="#原子性的实现" class="headerlink" title="原子性的实现"></a>原子性的实现</h2><p>原子性其实是由持久性和隔离性一起实现的</p>
 <h2 id="一致性的实现"><a href="#一致性的实现" class="headerlink" title="一致性的实现"></a>一致性的实现</h2><p>原子性，隔离性，持久性的体现就是一致性。</p>
-</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">我吃冰淇淋</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://feelerice.github.io/2021/09/27/MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1/">http://feelerice.github.io/2021/09/27/MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://feelerice.github.io" target="_blank">博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/mysql/">mysql</a></div><div class="post_share"><div class="social-share" data-image="/./img/default_cover.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/09/28/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/"><img class="prev-cover" src="/./img/default_cover3.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">类加载机制</div></div></a></div><div class="next-post pull-right"><a href="/2021/09/27/MySql%E7%B4%A2%E5%BC%95/"><img class="next-cover" src="/./img/default_cover1.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySql索引</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/09/27/MySql索引/" title="MySql索引"><img class="cover" src="/./img/default_cover1.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-27</div><div class="title">MySql索引</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">我吃冰淇淋</div><div class="author-info__description">记录一些想写的博客</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">25</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">19</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/feelerice" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/f1322919711@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="/1322919711" target="_blank" title="QQ"><i class="fab fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">MySQL锁与事务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.</span> <span class="toc-text">事务并发问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%94%E7%A6%BB%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">隔离性的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">基础知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%90%E8%97%8F%E5%88%97"><span class="toc-number">1.3.2.</span> <span class="toc-text">隐藏列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undo-log"><span class="toc-number">1.3.3.</span> <span class="toc-text">undo log</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#read-View"><span class="toc-number">1.3.4.</span> <span class="toc-text">read View</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MVCC"><span class="toc-number">1.3.5.</span> <span class="toc-text">MVCC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%81%E4%B9%85%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.</span> <span class="toc-text">持久性的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IO%E7%9F%A5%E8%AF%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">IO知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-number">1.4.2.</span> <span class="toc-text">缓冲区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mini-transaction"><span class="toc-number">1.4.3.</span> <span class="toc-text">mini-transaction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redo-log"><span class="toc-number">1.4.4.</span> <span class="toc-text">redo log</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.5.</span> <span class="toc-text">原子性的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.6.</span> <span class="toc-text">一致性的实现</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/10/06/JDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" title="JDK动态代理"><img src="/./img/default_cover5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="JDK动态代理"/></a><div class="content"><a class="title" href="/2021/10/06/JDK%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" title="JDK动态代理">JDK动态代理</a><time datetime="2021-10-06T05:14:09.000Z" title="发表于 2021-10-06 13:14:09">2021-10-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/06/ConcurrentHashMap%E8%AF%A6%E8%A7%A3/" title="ConcurrentHashMap详解"><img src="/./img/default_cover2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="ConcurrentHashMap详解"/></a><div class="content"><a class="title" href="/2021/10/06/ConcurrentHashMap%E8%AF%A6%E8%A7%A3/" title="ConcurrentHashMap详解">ConcurrentHashMap详解</a><time datetime="2021-10-06T01:09:37.000Z" title="发表于 2021-10-06 09:09:37">2021-10-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/05/Synchronized%E9%94%81%E5%8D%87%E7%BA%A7/" title="Synchronized锁升级"><img src="/./img/default_cover5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Synchronized锁升级"/></a><div class="content"><a class="title" href="/2021/10/05/Synchronized%E9%94%81%E5%8D%87%E7%BA%A7/" title="Synchronized锁升级">Synchronized锁升级</a><time datetime="2021-10-05T01:18:54.000Z" title="发表于 2021-10-05 09:18:54">2021-10-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/03/%E4%BA%94%E7%A7%8DIO%E6%A8%A1%E5%9E%8B/" title="五种IO模型"><img src="/./img/default_cover1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="五种IO模型"/></a><div class="content"><a class="title" href="/2021/10/03/%E4%BA%94%E7%A7%8DIO%E6%A8%A1%E5%9E%8B/" title="五种IO模型">五种IO模型</a><time datetime="2021-10-03T02:48:12.000Z" title="发表于 2021-10-03 10:48:12">2021-10-03</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/01/Executors%E7%BA%BF%E7%A8%8B%E6%B1%A0/" title="Executors线程池"><img src="/./img/default_cover5.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Executors线程池"/></a><div class="content"><a class="title" href="/2021/10/01/Executors%E7%BA%BF%E7%A8%8B%E6%B1%A0/" title="Executors线程池">Executors线程池</a><time datetime="2021-10-01T01:07:53.000Z" title="发表于 2021-10-01 09:07:53">2021-10-01</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 我吃冰淇淋</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">我吃冰淇淋</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="http://feelerice.github.io/2021/09/27/MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1/">http://feelerice.github.io/2021/09/27/MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://feelerice.github.io" target="_blank">博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/mysql/">mysql</a></div><div class="post_share"><div class="social-share" data-image="/./img/default_cover6.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/09/28/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6/"><img class="prev-cover" src="/./img/default_cover8.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">类加载机制</div></div></a></div><div class="next-post pull-right"><a href="/2021/09/27/MySql%E7%B4%A2%E5%BC%95/"><img class="next-cover" src="/./img/default_cover8.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">MySql索引</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/09/27/MySql索引/" title="MySql索引"><img class="cover" src="/./img/default_cover8.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-09-27</div><div class="title">MySql索引</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">我吃冰淇淋</div><div class="author-info__description">记录一些想写的博客</div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">82</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">23</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">24</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/feelerice" target="_blank" title="Github"><i class="fab fa-github"></i></a><a class="social-icon" href="/f1322919711@163.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a><a class="social-icon" href="/1322919711" target="_blank" title="QQ"><i class="fab fa-qq"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#MySQL%E9%94%81%E4%B8%8E%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.</span> <span class="toc-text">MySQL锁与事务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1"><span class="toc-number">1.1.</span> <span class="toc-text">事务</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8B%E5%8A%A1%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="toc-number">1.2.</span> <span class="toc-text">事务并发问题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%9A%94%E7%A6%BB%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.3.</span> <span class="toc-text">隔离性的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="toc-number">1.3.1.</span> <span class="toc-text">基础知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%90%E8%97%8F%E5%88%97"><span class="toc-number">1.3.2.</span> <span class="toc-text">隐藏列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#undo-log"><span class="toc-number">1.3.3.</span> <span class="toc-text">undo log</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#read-View"><span class="toc-number">1.3.4.</span> <span class="toc-text">read View</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MVCC"><span class="toc-number">1.3.5.</span> <span class="toc-text">MVCC</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%8C%81%E4%B9%85%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.4.</span> <span class="toc-text">持久性的实现</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IO%E7%9F%A5%E8%AF%86"><span class="toc-number">1.4.1.</span> <span class="toc-text">IO知识</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BC%93%E5%86%B2%E5%8C%BA"><span class="toc-number">1.4.2.</span> <span class="toc-text">缓冲区</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mini-transaction"><span class="toc-number">1.4.3.</span> <span class="toc-text">mini-transaction</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#redo-log"><span class="toc-number">1.4.4.</span> <span class="toc-text">redo log</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.5.</span> <span class="toc-text">原子性的实现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="toc-number">1.6.</span> <span class="toc-text">一致性的实现</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/10/17/537-%E5%A4%8D%E6%95%B0%E4%B9%98%E6%B3%95/" title="537.复数乘法"><img src="/./img/default_cover4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="537.复数乘法"/></a><div class="content"><a class="title" href="/2021/10/17/537-%E5%A4%8D%E6%95%B0%E4%B9%98%E6%B3%95/" title="537.复数乘法">537.复数乘法</a><time datetime="2021-10-17T06:57:03.000Z" title="发表于 2021-10-17 14:57:03">2021-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/17/553-%E6%9C%80%E4%BC%98%E9%99%A4%E6%B3%95/" title="553.最优除法"><img src="/./img/default_cover4.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="553.最优除法"/></a><div class="content"><a class="title" href="/2021/10/17/553-%E6%9C%80%E4%BC%98%E9%99%A4%E6%B3%95/" title="553.最优除法">553.最优除法</a><time datetime="2021-10-17T05:50:32.000Z" title="发表于 2021-10-17 13:50:32">2021-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/17/539-%E6%9C%80%E5%B0%8F%E6%97%B6%E9%97%B4%E5%B7%AE/" title="539.最小时间差"><img src="/./img/default_cover12.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="539.最小时间差"/></a><div class="content"><a class="title" href="/2021/10/17/539-%E6%9C%80%E5%B0%8F%E6%97%B6%E9%97%B4%E5%B7%AE/" title="539.最小时间差">539.最小时间差</a><time datetime="2021-10-17T02:50:15.000Z" title="发表于 2021-10-17 10:50:15">2021-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/17/506-%E7%9B%B8%E5%AF%B9%E5%90%8D%E6%AC%A1/" title="506.相对名次"><img src="/./img/default_cover2.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="506.相对名次"/></a><div class="content"><a class="title" href="/2021/10/17/506-%E7%9B%B8%E5%AF%B9%E5%90%8D%E6%AC%A1/" title="506.相对名次">506.相对名次</a><time datetime="2021-10-17T02:36:51.000Z" title="发表于 2021-10-17 10:36:51">2021-10-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/10/17/412-Fizz-Buzz/" title="412.Fizz-Buzz"><img src="/./img/default_cover14.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="412.Fizz-Buzz"/></a><div class="content"><a class="title" href="/2021/10/17/412-Fizz-Buzz/" title="412.Fizz-Buzz">412.Fizz-Buzz</a><time datetime="2021-10-17T02:15:45.000Z" title="发表于 2021-10-17 10:15:45">2021-10-17</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2020 - 2021 By 我吃冰淇淋</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
+  window.MathJax = {
+    tex: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"]],
+      tags: 'ams'
+    },
+    chtml: {
+      scale: 1.2
+    },
+    options: {
+      renderActions: {
+        findScript: [10, doc => {
+          for (const node of document.querySelectorAll('script[type^="math/tex"]')) {
+            const display = !!node.type.match(/; *mode=display/)
+            const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display)
+            const text = document.createTextNode('')
+            node.parentNode.replaceChild(text, node)
+            math.start = {node: text, delim: '', n: 0}
+            math.end = {node: text, delim: '', n: 0}
+            doc.math.push(math)
+          }
+        }, ''],
+        insertScript: [200, () => {
+          document.querySelectorAll('mjx-container:not\([display]\)').forEach(node => {
+            const target = node.parentNode
+            if (target.nodeName.toLowerCase() === 'li') {
+              target.parentNode.classList.add('has-jax')
+            } else {
+              target.classList.add('has-jax')
+            }
+          });
+        }, '', false]
+      }
+    }
+  }
+  
+  const script = document.createElement('script')
+  script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js'
+  script.id = 'MathJax-script'
+  script.async = true
+  document.head.appendChild(script)
+} else {
+  MathJax.startup.document.state(0)
+  MathJax.texReset()
+  MathJax.typeset()
+}</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
